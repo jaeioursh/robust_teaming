@@ -93,7 +93,7 @@ class learner:
         self.Dapprox=[Net() for i in range(self.nagents)]
 
         
-        self.test_teams=None
+        self.test_teams=self.set_test_teams()
         sim.data["Number of Policies"]=32
 
         self.hist=[deque(maxlen=self.types*2000) for i in range(self.nagents)]
@@ -116,12 +116,23 @@ class learner:
         return np.array(A)*2.0
     
 
+    def set_test_teams(self):
+        team=[]
+
+        for i in range(100):
+            val=None
+            while val is None:
+
+                idx= tuple([np.random.randint(q) for q in self.ext_params.shape])
+                val=self.ext_params[idx]
+            team.append(idx)
+        return team
 
 
             
 
 
-    def set_teams(self,N,rand=0):
+    def set_teams(self,rand=0):
         self.team=[]
 
         for i in range(self.types):
@@ -134,7 +145,7 @@ class learner:
 
         
         
-        self.test_teams=self.team
+        
 
     def set_single(self,team):
         params,r=self.ext_params[team]
@@ -142,12 +153,13 @@ class learner:
         self.external_agent.__setstate__(params)
 
 
-    def save(self,folder,idx):
+    def save(self,folder,net_save=True):
         print("saved")
-        self.log.save(folder+"/data.pkl")
+        self.log.save(folder+".pkl")
         #print(self.Dapprox[0].model.state_dict()['4.bias'].is_cuda)
-        netinfo={i:self.Dapprox[i].model.state_dict() for i in range(len(self.Dapprox))}
-        torch.save(netinfo,folder+"/"+str(idx)+".mdl")
+        if net_save:
+            netinfo={i:self.Dapprox[i].model.state_dict() for i in range(len(self.Dapprox))}
+            torch.save(netinfo,folder+".mdl")
 
     #train_flag=0 - D
     #train_flag=1 - Neural Net Approx of D
@@ -313,7 +325,7 @@ class learner:
 
             
             
-            #team=np.array(teams[i]).copy()
+            #team=np.array(teams[i]).copy()ffmpeg -i input_file.mp4 -f mov output_file.mov
             #np.random.shuffle(team)
             self.team=[teams[i]]
             team=teams[i]
@@ -350,7 +362,7 @@ class learner:
             #aprx.append([self.team[0],ap])
             Rs.append(g)
         self.log.store("position",team_pos)
-        self.log.store("aprx",aprx)
+        #self.log.store("aprx",aprx)
         self.log.store("test",Rs)
         self.aprx=aprx
         self.team=old_team

@@ -27,22 +27,22 @@ def sample_states():
         S.append(s)
     
     S=np.array(S)
-    np.save("a.npy",S)
+    np.save("save/a.npy",S)
 
 def train_ae():
-    S=np.load("a.npy")
+    S=np.load("save/a.npy")
     ae=Autoencoder()
     for i in range(10000):
         s=S[np.random.randint(S.shape[0], size=1000), :]
         err=ae.train(s)
         print(i,err)
         if i%50==49:
-            ae.save("a.mdl")
+            ae.save("save/a.mdl")
 
 def view_ae():
-    S=np.load("a.npy")
+    S=np.load("save/a.npy")
     ae=Autoencoder()
-    ae.load("a.mdl")
+    ae.load("save/a.mdl")
     xy=ae.feed(S)
     plt.scatter(xy[:,0],xy[:,1])
     plt.xlim([0,1])
@@ -55,7 +55,7 @@ def view_ae():
 def train_map():
     env = make_env(1,1)
     ae=Autoencoder()
-    ae.load("a.mdl")
+    ae.load("save/a.mdl")
     run(env,1000000,ae)
 
 

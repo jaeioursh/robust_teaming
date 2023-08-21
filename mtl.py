@@ -82,10 +82,10 @@ def make_env(nagents,coup=2,rand=0):
 
 import time
 
-def test1(trial,k,n,train_flag,n_teams):
+def test1(trial,n_agents,n_teams,team_swap_frq,train_flag):
     #print(np.random.get_state())[1]    
     np.random.seed(int(time.time()*100000)%100000)
-    env=make_env(n)
+    env=make_env(n_agents)
 
     with open("save/a.pkl","rb") as f:
         arry = pickle.load(f)
@@ -94,32 +94,30 @@ def test1(trial,k,n,train_flag,n_teams):
  
     OBS=env.reset()
 
-    controller = learner(n,k,env,agent,arry)
+    controller = learner(n_agents,n_teams,env,agent,arry)
     #controller.set_teams(n_teams)
 
-    for i in range(4001):
+    for i in range(10001):
 
         
         #controller.randomize()
-        if i%100000==0:
+        if i%team_swap_frq==0:
             controller.set_teams(n_teams)
 
-        if i%1==0:
+        if i%10==0:
             controller.test(env)
 
         r=controller.run(env,train_flag)# i%100 == -10)
         print(i,r,len(controller.team),train_flag)
         
             
-        if i%50==0:
+        if i%10==0:
            
             
-            folder="tests/"+str(k)+"-"+str(n)+"-"+str(trial)+"-"+str(train_flag)
-            if not os.path.exists("tests"):
-                os.makedirs("tests")
-            if not os.path.exists(folder):
-                os.makedirs(folder)
-            controller.save(folder,i)
+            folder="save/testing/data"+"-".join([str(S) for S in [n_agents,n_teams,team_swap_frq,trial]])
+            if not os.path.exists("save/testing/"):
+                os.makedirs("save/testing/")
+            controller.save(folder,False)
 
     #train_flag=0 - D
     #train_flag=1 - Neural Net Approx of D
@@ -143,21 +141,21 @@ if __name__=="__main__":
         print(s.getvalue())
         
     else:
-        for train in [4]:
-            procs=[]
-            k=5
-            n=4
-            for k,n in [[5,4]]:
+        procs=[]
+        for n_teams in [10,50]:
+            for team_swap_frq in [50,500]:
                 teams=100
-                for i in range(1):
-                    
-                    p=mp.Process(target=test1,args=(i,k,n,train,teams))
+                for i in range(4):
+                    trial=i
+                    n_agents=4
+                    train_flag=4
+                    p=mp.Process(target=test1,args=(trial,n_agents,n_teams,team_swap_frq,train_flag))
                     p.start()
                     time.sleep(0.05)
                     procs.append(p)
                     #p.join()git ad
-                for p in procs:
-                    p.join()
+        for p in procs:
+            p.join()
 
 # 100 - static
 # 200 - minimax single

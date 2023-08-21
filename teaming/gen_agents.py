@@ -23,7 +23,7 @@ def pick(arry):
 
 def run(env,iters,ae=None):
     n=0
-    shape=(150,150)
+    shape=(50,50)
     arry=gen_dict(shape)
     agent=Evo_MLP(8,2,20)
     for i in range(iters):
@@ -61,6 +61,6 @@ def run(env,iters,ae=None):
 
         if i%1000==0:
             print(i,n)
-            with open("save/b.pkl","wb") as f:
+            with open("save/a.pkl","wb") as f:
                 pickle.dump( arry,f)
 

@@ -2,14 +2,14 @@ import numpy as np
 import pickle 
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-
+from time import time
 
 import pyximport
 pyximport.install()
 from teaming.cceamtl import *
 from mtl import make_env
 
-with open("save/b.pkl","rb") as f:
+with open("save/a.pkl","rb") as f:
     arry=pickle.load(f)
 
 
@@ -40,11 +40,15 @@ plt.xlim([-10, 40 ])
 plt.ylim([-10, 40 ])
 
 fig2.canvas.draw()
-
+T=time()
 
 def test(event):
-    global XX,YY,drawn,plot_handle
-    
+    global XX,YY,drawn,plot_handle,T
+    if time()-T<1.0/5.0:
+        return
+    else:
+        T=time()
+
     A=[]
     x=int(event.xdata+0.5)
     y=int(event.ydata+0.5)
@@ -52,12 +56,13 @@ def test(event):
         return
     
     
-    env.reset()
+    
     XX=x
     YY=y
     print(y,x)
     information=arry[y,x]
     if information is not None:
+        env.reset()
         params,generation=information
         params=[np.copy(np.array(p)) for p in params]
         agent.__setstate__(params)
@@ -71,11 +76,12 @@ def test(event):
             S=S[0]
             xy=env.data["Agent Positions"][0]
             pos.append(xy.copy())
-        plt.title(np.array2string(S[4:])+"  "+str(r[0])+"   "+str(generation))
+        S=np.round(S,4)
+        plt.title(np.array2string(S[4:]))
         pos=np.array(pos)
         plot_handle.set_xdata(pos[:,0])
         plot_handle.set_ydata(pos[:,1])
-        plt.figure(2).canvas.draw()
+        plt.gcf().canvas.draw()
     
 #kind="button_press_event"
 kind="motion_notify_event"
