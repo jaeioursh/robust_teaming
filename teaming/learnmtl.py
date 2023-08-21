@@ -202,14 +202,16 @@ class learner:
                     
                     pols[i].D.append(d)
                     pols[i].S.append([])
-                    for j in range(len(S)):
-                        z=[S[j][i],A[j][i],g]
-                        #if d!=0:
-                        self.hist[i].append(z)
-                        #else:
-                        #    self.zero[team[i]].append(z)
-                        pols[i].S[-1].append(S[j][i])
-                    pols[i].Z.append(S[-1][i])
+                    if train_flag==1 or train_flag==2 or train_flag==3:
+                        for j in range(len(S)):
+                            z=[S[j][i],A[j][i],g]
+                            #if d!=0:
+                            self.hist[i].append(z)
+                            #else:
+                            #    self.zero[team[i]].append(z)
+                            pols[i].S[-1].append(S[j][i])
+                        
+                        pols[i].Z.append(S[-1][i])
                         
                 G.append(g)
             
@@ -315,7 +317,7 @@ class learner:
         self.log.store("poi vals",np.array(env.data['Poi Static Values']))
         Rs=[]
         teams=copy(self.test_teams)
-        #self.log.clear("teams")
+        self.log.clear("teams")
         self.log.store("teams",teams)
         #self.log.store("idxs",self.index)
 
