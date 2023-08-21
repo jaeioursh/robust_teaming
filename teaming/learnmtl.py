@@ -306,7 +306,7 @@ class learner:
         #
         
 
-        #self.log.clear("position")
+        self.log.clear("position")
         self.log.clear("types")
         
         self.log.clear("poi")
