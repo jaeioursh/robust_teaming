@@ -23,12 +23,20 @@ print(mp)
 fig1=plt.figure(1)
 
 plt.imshow(mp,cmap=mpl.colormaps["Reds"])
-fig2=plt.figure(2)
+
+mp=[[np.nan if a is None else 1./(a[3]+200) for a in arr] for arr in arry]
+print(mp)
+fig1_5=plt.figure(2)
+
+plt.imshow(mp,cmap=mpl.colormaps["Reds"])
+
+fig2=plt.figure(3)
+plot_handle=None
 XX,YY=-1,-1
 drawn=False
 plot_handle=None
 
-fig2=plt.figure(2)
+fig2=plt.figure(3)
 fig2.clear()
 plot_handle, =plt.gca().plot([0],[0],"o")    
 print(plot_handle)
@@ -63,7 +71,7 @@ def test(event):
     information=arry[y,x]
     if information is not None:
         env.reset()
-        params,generation=information
+        params=information[0]
         params=[np.copy(np.array(p)) for p in params]
         agent.__setstate__(params)
 

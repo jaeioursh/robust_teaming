@@ -30,7 +30,7 @@ def run(env,iters,ae=None):
        
         S=env.reset()[0]
         if i>0:
-            params,r=pick(arry)
+            params,r,old_idx,hits=pick(arry)
             params=[np.copy(np.array(p)) for p in params]
             agent.__setstate__(params)
             agent.mutate()
@@ -55,7 +55,13 @@ def run(env,iters,ae=None):
         if info is None:
             n+=1
             params=[np.copy(np.array(p)) for p in agent.__getstate__()]
-            arry[idx]=(params,r)
+            arry[idx]=[params,r,idx,0]
+        else:
+            if idx!=old_idx:
+                arry[idx][-1]+=1
+
+
+
         
         
 

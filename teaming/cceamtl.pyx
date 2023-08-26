@@ -246,4 +246,20 @@ cpdef evolveCceaPolicies(data):
             data['Agent Populations'][agentIndex] = population
             
     
-            
+cpdef evolvepop(population): 
+    for matchIndex in range(len(population)//2):
+        
+        if population[2 * matchIndex].fitness > population[2 * matchIndex + 1].fitness:
+            population[2 * matchIndex + 1].copyFrom(population[2 * matchIndex])
+        else:
+            population[2 * matchIndex].copyFrom(population[2 * matchIndex + 1])
+
+        
+        population[2 * matchIndex + 1].fitness=0.0
+
+    
+    random.shuffle(population)
+        
+        
+
+                    

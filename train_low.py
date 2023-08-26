@@ -2,11 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from random import sample 
 
-from rover_domain_core_gym import RoverDomainGym
 import pyximport
 pyximport.install()
-import code.ccea_2 as ccea
-import code.agent_domain_2 as domain
 from mtl import make_env
 from teaming.gen_agents import run
 from teaming.autoencoder import Autoencoder
