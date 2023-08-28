@@ -2,7 +2,7 @@ import numpy as np
 import os
 from sklearn.neighbors import NearestNeighbors
 import multiprocessing as mp
-from time import time
+import time
 
 from mtl import make_env
 from teaming.autoencoder import DIAYN,Autoencoder
