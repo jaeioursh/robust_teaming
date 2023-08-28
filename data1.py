@@ -1,4 +1,4 @@
-
+#for viewing teaming with pols
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
