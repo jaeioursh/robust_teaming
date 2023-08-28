@@ -101,7 +101,7 @@ def neighbors(env,itr,k,AE=0,iterations=2000):
 if __name__ == "__main__":
     if not os.path.exists("save/baselines/"):
         os.makedirs("save/baselines/")
-    if 1:
+    if 0:
         env=make_env(1)
         diversity(env,0,10)
         #neighbors(env,0,5,0)
