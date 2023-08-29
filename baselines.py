@@ -119,8 +119,8 @@ if __name__ == "__main__":
                     time.sleep(0.05)
                     procs.append(p)
             for n_agents in (10,50,250):
-                #env=make_env(1)
-                #p=mp.Process(target=diversity,args=(env,itr,n_agents))
+                env=make_env(1)
+                p=mp.Process(target=diversity,args=(env,itr,n_agents))
                 p.start()
                 time.sleep(0.05)
                 procs.append(p)
