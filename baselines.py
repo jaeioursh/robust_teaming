@@ -87,8 +87,10 @@ def neighbors(env,itr,k,AE=0,iterations=2000):
         dist=neigh.kneighbors(x)[0]
         dist=np.array(dist)
         dist=dist[:,1:]
+        print(dist.shape)
+        #print(dist)
         r=np.mean(dist,axis=1)
-
+        print(np.max(r),r.shape)
         for j in range(pop_size):
             pop[j].fitness=r[j]
         evolvepop(pop)
@@ -103,8 +105,8 @@ if __name__ == "__main__":
         os.makedirs("save/baselines/")
     if 0:
         env=make_env(1)
-        diversity(env,0,10)
-        #neighbors(env,0,5,0)
+        #diversity(env,77,10)
+        neighbors(env,77,5,1)
     else:
         procs=[]
         
@@ -117,8 +119,8 @@ if __name__ == "__main__":
                     time.sleep(0.05)
                     procs.append(p)
             for n_agents in (10,50,250):
-                env=make_env(1)
-                p=mp.Process(target=diversity,args=(env,itr,n_agents))
+                #env=make_env(1)
+                #p=mp.Process(target=diversity,args=(env,itr,n_agents))
                 p.start()
                 time.sleep(0.05)
                 procs.append(p)

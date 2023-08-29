@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from teaming.autoencoder import Autoencoder
 
-novelty=0
+novelty=1
 
 if novelty:
     itr=0

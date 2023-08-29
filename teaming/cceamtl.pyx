@@ -255,7 +255,7 @@ cpdef evolvepop(population):
             population[2 * matchIndex].copyFrom(population[2 * matchIndex + 1])
 
         
-        population[2 * matchIndex + 1].fitness=0.0
+        population[2 * matchIndex + 1].mutate()
 
     
     random.shuffle(population)
