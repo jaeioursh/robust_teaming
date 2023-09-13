@@ -119,11 +119,12 @@ def neighbors(env,itr,k,AE=0,PERM=0,iterations=450):
 if __name__ == "__main__":
     if not os.path.exists("save/baselines/"):
         os.makedirs("save/baselines/")
-    if 1:
-        PERM=1
+    if 0:
+        PERM=0
         env=make_env(1,PERM=PERM)
         #diversity(env,77,10,PERM)
-        neighbors(env,77,5,1,PERM)
+        #neighbors(env,77,5,1,PERM)
+        train_map(env,77,50,PERM)
     else:
         procs=[]
         for PERM in range(4):
@@ -142,12 +143,12 @@ if __name__ == "__main__":
                     time.sleep(0.05)
                     procs.append(p)
                 
-                sh=150
-                env=make_env(1,PERM=PERM)
-                p=mp.Process(target=train_map,args=(env,itr,sh,PERM))
-                p.start()
-                time.sleep(0.05)
-                procs.append(p)
+                for sh in [50,150,750]:
+                    env=make_env(1,PERM=PERM)
+                    p=mp.Process(target=train_map,args=(env,itr,sh,PERM))
+                    p.start()
+                    time.sleep(0.05)
+                    procs.append(p)
             
         for p in procs:
             p.join()
