@@ -126,9 +126,10 @@ if __name__ == "__main__":
         #neighbors(env,77,5,1,PERM)
         train_map(env,77,50,PERM)
     else:
-        procs=[]
+        
         for PERM in range(4):
             for itr in range(8):
+                procs=[]
                 for k in (5,10,50):
                     for AE in [0,1]:
                         env=make_env(1,PERM=PERM)
@@ -150,5 +151,5 @@ if __name__ == "__main__":
                     time.sleep(0.05)
                     procs.append(p)
             
-        for p in procs:
-            p.join()
+                for p in procs:
+                    p.join()
