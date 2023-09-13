@@ -16,15 +16,19 @@ def pol2idx(info,ix):
     i1,i2=min(int(i1*scale),ix[0]-1),min(int(i2*scale),ix[1]-1)
     return (i1,i2)
 
-def pick(arry):
-    vals=arry[arry!=None]
-    return np.random.choice(vals,1)[0]
+def pick(arry,MT):
+    ij=MT.nonzero()
+
+    idx=np.random.randint(0,len(ij[0]))
+    return arry[ij[0][idx],ij[1][idx]]
+    #return np.random.choice(vals,1)[0]
 
 
 def run(env,iters,itr,sh,ae=None,PERM=0):
     n=0
     shape=(sh,sh)
     arry=gen_dict(shape)
+    MT=np.zeros(shape)
     if PERM==1:
         agent=Evo_MLP(32,2,20)
     else:
@@ -35,7 +39,7 @@ def run(env,iters,itr,sh,ae=None,PERM=0):
        
         S=env.reset()[0]
         if i>0:
-            params,r,old_idx,hits=pick(arry)
+            params,r,old_idx,hits=pick(arry,MT)
             params=[np.copy(np.array(p)) for p in params]
             agent.__setstate__(params)
             agent.mutate()
@@ -68,6 +72,7 @@ def run(env,iters,itr,sh,ae=None,PERM=0):
             n+=1
             params=[np.copy(np.array(p)) for p in agent.__getstate__()]
             arry[idx]=[params,r,idx,0]
+            MT[idx]=1
         else:
             if idx!=old_idx:
                 arry[idx][-1]+=1

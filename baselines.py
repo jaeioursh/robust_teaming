@@ -130,6 +130,7 @@ if __name__ == "__main__":
         for PERM in range(4):
             for itr in range(8):
                 procs=[]
+                
                 for k in (5,10,50):
                     for AE in [0,1]:
                         env=make_env(1,PERM=PERM)
@@ -144,12 +145,12 @@ if __name__ == "__main__":
                     time.sleep(0.05)
                     procs.append(p)
                 
-                for sh in [50,150,750]:
+                for sh in [50,150,500]:
                     env=make_env(1,PERM=PERM)
                     p=mp.Process(target=train_map,args=(env,itr,sh,PERM))
                     p.start()
                     time.sleep(0.05)
                     procs.append(p)
-            
+                
                 for p in procs:
                     p.join()

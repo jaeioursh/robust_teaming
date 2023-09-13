@@ -1,9 +1,20 @@
 
 from mtl import make_env
+from train_low import train_map
 
-env=make_env(1,2,0,1,1)
-print(env.worldTrainStepFuncCol)
+import cProfile, pstats, io
+from pstats import SortKey
+pr = cProfile.Profile()
+pr.enable()
 
-S, r, done, info = env.step([[1,1]])
-S=S[0]
-print(S)
+
+PERM=1
+env=make_env(1,PERM=PERM)
+train_map(env,77,750,PERM)
+
+pr.disable()
+s = io.StringIO()
+sortby = SortKey.CUMULATIVE
+ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+ps.print_stats()
+print(s.getvalue())
