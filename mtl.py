@@ -14,6 +14,7 @@ import pyximport
 pyximport.install()
 from teaming.cceamtl import *
 import code.agent_domain_2 as domain
+from code.mod import *
 
 #import mods
 from teaming.learnmtl import learner
@@ -38,7 +39,7 @@ def rand_loc(n):
 
 
 #print(vals)
-def make_env(nagents,coup=2,rand=0):
+def make_env(nagents,coup=2,rand=0,PERM=0):
     vals =np.array([0.8,1.0,0.6,0.3,0.2,0.1])
     
     if rand:
@@ -70,6 +71,14 @@ def make_env(nagents,coup=2,rand=0):
 
     sim.data["Coupling"]=coup
     sim.data['Number of Agents']=nagents
+
+    if PERM==1:
+        sim.data["Observation Function"]=doAgentSense_highres
+    if PERM==2:
+        sim.data["Observation Function"]=doAgentSense_lowrange
+    if PERM==3:
+        sim.worldTrainStepFuncCol[0]=doAgentMove_half
+        sim.worldTestStepFuncCol[0]=doAgentMove_half
 
     obs=sim.reset()
 

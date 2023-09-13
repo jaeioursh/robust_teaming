@@ -9,12 +9,20 @@ from teaming.autoencoder import DIAYN,Autoencoder
 import pyximport
 pyximport.install()
 from teaming.cceamtl import *
+from train_low import train_map
 
-def diversity(env,itr,n_agents,iterations=1000):
-    
+def diversity(env,itr,n_agents,PERM=0,iterations=4000):
+    iterations/=n_agents
+    iterations=int(iterations)
     pop_size=32
-    agents=[[Evo_MLP(8,2,20) for p in range(pop_size)] for a in range(n_agents)]
-    desc=DIAYN(n_agents)
+    if PERM==1:
+        agents=[[Evo_MLP(32,2,20) for p in range(pop_size)] for a in range(n_agents)]
+    else:
+        agents=[[Evo_MLP(8,2,20) for p in range(pop_size)] for a in range(n_agents)]
+    if PERM==1:
+        desc=DIAYN(n_agents,32)
+    else:
+        desc=DIAYN(n_agents)
     States=[]
     for i in range(iterations):
         print(i)
@@ -46,20 +54,25 @@ def diversity(env,itr,n_agents,iterations=1000):
             loss=desc.train(X,Y)
             #print(loss)
         if i%10==0:
-            fname="save/baselines/D"+"-".join([str(D) for D in[itr,n_agents]])
+            fname="save/baselines/D"+"-".join([str(D) for D in[itr,n_agents,PERM]])
             np.save(fname+".st",np.array(States))    
             np.save(fname+".pos",np.array(POS)) 
 
-def neighbors(env,itr,k,AE=0,iterations=2000):
+def neighbors(env,itr,k,AE=0,PERM=0,iterations=450):
 
     neigh = NearestNeighbors(n_neighbors=k+1)
 
     pop_size=250
     if AE:
-        ae=Autoencoder()
-        ae.load("save/a.mdl")
-    
-    pop=[Evo_MLP(8,2,20) for p in range(pop_size)]
+        if PERM==1:
+            ae=Autoencoder(16)
+        else:
+            ae=Autoencoder()
+        ae.load("save/"+str(PERM)+".mdl")
+    if PERM==1:
+        pop=[Evo_MLP(32,2,20) for p in range(pop_size)]
+    else:
+        pop=[Evo_MLP(8,2,20) for p in range(pop_size)]
     States=[]
     for i in range(iterations):
         print(i)
@@ -80,7 +93,10 @@ def neighbors(env,itr,k,AE=0,iterations=2000):
         
       
         if AE:
-            x=ae.feed(np.array(X)[:,4:])
+            if PERM==1:
+                x=ae.feed(np.array(X)[:,16:])
+            else:
+                x=ae.feed(np.array(X)[:,4:])
         else:
             x=X
         neigh.fit(x)
@@ -95,7 +111,7 @@ def neighbors(env,itr,k,AE=0,iterations=2000):
             pop[j].fitness=r[j]
         evolvepop(pop)
         if i%10==0:
-            fname="save/baselines/N"+"-".join([str(N) for N in[itr,k,AE]])
+            fname="save/baselines/N"+"-".join([str(N) for N in[itr,k,AE,PERM]])
             np.save(fname+".st",np.array(States))    
             np.save(fname+".pos",np.array(POS))  
 
@@ -103,27 +119,35 @@ def neighbors(env,itr,k,AE=0,iterations=2000):
 if __name__ == "__main__":
     if not os.path.exists("save/baselines/"):
         os.makedirs("save/baselines/")
-    if 0:
-        env=make_env(1)
-        #diversity(env,77,10)
-        neighbors(env,77,5,1)
+    if 1:
+        PERM=1
+        env=make_env(1,PERM=PERM)
+        #diversity(env,77,10,PERM)
+        neighbors(env,77,5,1,PERM)
     else:
         procs=[]
-        
-        for itr in range(4):
-            for k in (5,10,50):
-                for AE in [0,1]:
-                    env=make_env(1)
-                    p=mp.Process(target=neighbors,args=(env,itr,k,AE))
+        for PERM in range(4):
+            for itr in range(8):
+                for k in (5,10,50):
+                    for AE in [0,1]:
+                        env=make_env(1,PERM=PERM)
+                        p=mp.Process(target=neighbors,args=(env,itr,k,AE,PERM))
+                        p.start()
+                        time.sleep(0.05)
+                        procs.append(p)
+                for n_agents in (10,50,250):
+                    env=make_env(1,PERM=PERM)
+                    p=mp.Process(target=diversity,args=(env,itr,n_agents,PERM))
                     p.start()
                     time.sleep(0.05)
                     procs.append(p)
-            for n_agents in (10,50,250):
-                env=make_env(1)
-                p=mp.Process(target=diversity,args=(env,itr,n_agents))
+                
+                sh=150
+                env=make_env(1,PERM=PERM)
+                p=mp.Process(target=train_map,args=(env,itr,sh,PERM))
                 p.start()
                 time.sleep(0.05)
                 procs.append(p)
-                    
+            
         for p in procs:
             p.join()

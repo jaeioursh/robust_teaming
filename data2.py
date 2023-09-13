@@ -13,7 +13,7 @@ if novelty:
 
 else:
     itr=0
-    n_agents=10
+    n_agents=250
     fname="save/baselines/D"+"-".join([str(D) for D in[itr,n_agents]])
 
 

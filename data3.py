@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from teaming.autoencoder import Autoencoder
 
-novelty=1
+novelty=0
 
 if novelty:
     itr=0
@@ -16,7 +16,7 @@ if novelty:
 
 else:
     itr=0
-    n_agents=10
+    n_agents=250
     fname="save/baselines/D"+"-".join([str(D) for D in[itr,n_agents]])
 
 
@@ -26,7 +26,7 @@ state=np.load(fname)
 print(state.shape)
 state=state.reshape((state.shape[0]*state.shape[1],8))
 state=state[:,4:]
-
+state=state[:100000]
 ae=Autoencoder()
 ae.load("save/a.mdl")
 xy=ae.feed(state)

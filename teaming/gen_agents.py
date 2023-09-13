@@ -21,11 +21,16 @@ def pick(arry):
     return np.random.choice(vals,1)[0]
 
 
-def run(env,iters,ae=None):
+def run(env,iters,itr,sh,ae=None,PERM=0):
     n=0
-    shape=(50,50)
+    shape=(sh,sh)
     arry=gen_dict(shape)
-    agent=Evo_MLP(8,2,20)
+    if PERM==1:
+        agent=Evo_MLP(32,2,20)
+    else:
+        agent=Evo_MLP(8,2,20)
+    STATES=[]
+    POS=[]
     for i in range(iters):
        
         S=env.reset()[0]
@@ -34,18 +39,25 @@ def run(env,iters,ae=None):
             params=[np.copy(np.array(p)) for p in params]
             agent.__setstate__(params)
             agent.mutate()
-            
+        
+        positions=[]
         for j in range(30):
             act=np.array(agent.get_action(S))
             S, r, done, info = env.step([act])
+            positions.append(np.array(env.data["Agent Positions"]))
             S=S[0]
+        STATES.append(S)
+        POS.append(positions)
         g=0.0
         r=r[0]
         
         if ae is None:
             idx=pol2idx(S,shape)
         else:
-            ix=ae.feed(S[4:])
+            if PERM==1:
+                ix=ae.feed(S[16:])
+            else:
+                ix=ae.feed(S[4:])
             idx=[]
             for q in range(len(shape)):
                 idx.append(int(ix[q]*shape[q]))
@@ -67,6 +79,7 @@ def run(env,iters,ae=None):
 
         if i%1000==0:
             print(i,n)
-            with open("save/a.pkl","wb") as f:
-                pickle.dump( arry,f)
+            fname="save/baselines/M"+"-".join([str(D) for D in[itr,sh,PERM]])
+            np.save(fname+".st",np.array(STATES))  
+            np.save(fname+".pos",np.array(POS))  
 

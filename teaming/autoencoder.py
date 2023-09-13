@@ -5,7 +5,7 @@ import torch.optim as optim
 import numpy as np
 
 class Autoencoder(nn.Module):
-    def __init__(self):
+    def __init__(self,nstate=4):
         super(Autoencoder, self).__init__()
 
         
@@ -13,7 +13,7 @@ class Autoencoder(nn.Module):
         self.S1=60
         self.S2=30
         self.encoder = nn.Sequential( # like the Composition layer you built
-            nn.Linear(4, self.S1),
+            nn.Linear(nstate, self.S1),
             nn.LeakyReLU(negative_slope=0.05),
             #nn.Sigmoid(),
             nn.Linear(self.S1, self.S2),
@@ -29,7 +29,7 @@ class Autoencoder(nn.Module):
             nn.Linear(self.S2, self.S1),
             nn.LeakyReLU(negative_slope=0.05),
             #nn.Sigmoid(),
-            nn.Linear(self.S1,4)
+            nn.Linear(self.S1,nstate)
         )
 
         self.loss_fn = torch.nn.MSELoss(reduction='sum')
@@ -74,7 +74,7 @@ class Autoencoder(nn.Module):
 
 
 class DIAYN(nn.Module):
-    def __init__(self,classes):
+    def __init__(self,classes,nstate=8):
         super(DIAYN, self).__init__()
 
         
@@ -82,7 +82,7 @@ class DIAYN(nn.Module):
         self.S1=100
         self.S2=50
         self.model = nn.Sequential( # like the Composition layer you built
-            nn.Linear(8, self.S1),
+            nn.Linear(nstate, self.S1),
             nn.LeakyReLU(negative_slope=0.05),
             #nn.Sigmoid(),
             nn.Linear(self.S1, self.S2),
