@@ -7,13 +7,20 @@ plt.style.use('tableau-colorblind10')
 from teaming.autoencoder import Autoencoder
 
 #scp -J cookjos@access.engr.oregonstate.edu cookjos@graf200-16.engr.oregonstate.edu:robust_teaming/save/baselines/* save/baselines/
-def loads(fname,ae,shape):
+def loads(fname,ae,shape,PERM):
     state=np.load(fname)
     print(state.shape)
-    if len(state.shape)==3:
-        state=state.reshape((state.shape[0]*state.shape[1],8))
-    state=state[:,4:]
-    state=state[:99000]
+    if PERM==1:
+        if len(state.shape)==3:
+            state=state.reshape((state.shape[0]*state.shape[1],32))
+        state=state[:,16:]
+        
+    else:
+        if len(state.shape)==3:
+            state=state.reshape((state.shape[0]*state.shape[1],8))
+        state=state[:,4:]
+    print(state.shape)
+    state=state[:100000]
     states=np.split(state,10)
     
     print("Net in")
@@ -35,54 +42,72 @@ def loads(fname,ae,shape):
 
 
 
+def plot4(PERM,sh=50,view=False):
+    #PERM=1
+    TRIALS=8
+    if PERM==1:
+        ae=Autoencoder(16)
+    else:
+        ae=Autoencoder()
+    ae.load("save/"+str(PERM)+".mdl")
+    #sh=50
+    shape=(sh,sh)
 
+    data=[]
+    for k in (5,10,50):
+        for AE in [1]:
+            d=[]
+            for itr in range(TRIALS):
+                fname="save/baselines/N"+"-".join([str(N) for N in[itr,k,AE,PERM]])+".st.npy"
+                print(fname)
+                d.append( loads(fname,ae,shape,PERM)[0] )
+            data.append([d,"Diversity"+str(k)])#+"ae"*AE])
 
-ae=Autoencoder()
-ae.load("save/a.mdl")
-sh=50
-shape=(sh,sh)
-
-data=[]
-for k in (5,10,50):
-    for AE in [0,1]:
+    for n_agents in (10,50,250):
         d=[]
-        for itr in range(4):
-            fname="save/baselines/N"+"-".join([str(N) for N in[itr,k,AE]])+".st.npy"
-            d.append( loads(fname,ae,shape)[0] )
-        data.append([d,"Diversity"+str(k)+"ae"*AE])
+        for itr in range(TRIALS):
+            fname="save/baselines/D"+"-".join([str(D) for D in[itr,n_agents,PERM]])+".st.npy"
+            print(fname)
+            d.append( loads(fname,ae,shape,PERM)[0] )
+        data.append([d,"DIAYN"+str(n_agents)])
 
-for n_agents in (10,50,250):
     d=[]
-    for itr in range(4):
-        fname="save/baselines/D"+"-".join([str(D) for D in[itr,n_agents]])+".st.npy"
-        d.append( loads(fname,ae,shape)[0] )
-    data.append([d,"DIAYN"+str(n_agents)])
+    for itr in range(TRIALS):
+        fname="save/baselines/M"+"-".join([str(D) for D in[itr,sh,PERM]])+".st.npy"
+        print(fname)
+        d.append( loads(fname,ae,shape,PERM)[0] )
+            
 
-d=[]
-for itr in range(4):
-    fname="save/baselines/M"+"-".join([str(D) for D in[itr,sh]])+".st.npy"
-    d.append( loads(fname,ae,shape)[0] )
-data.append([d,"OURS"])        
+    data=sorted(data,key = lambda Q:-np.mean([q[-1] for q in Q[0]]))
+    data=[[d,"OURS"]]+data
+    for d,tag in data:
+        T=np.mean(d,axis=0)
+        X=np.arange(len(T))
+        std=np.std(d,axis=0)/np.sqrt(8)
+        plt.plot(X,T,label=tag)
+        plt.fill_between(X,T-std,T+std,alpha=0.35, label='_nolegend_')
+    plt.legend()
+    plt.title("Resolution: " +str(sh)+", Env. Version "+str(PERM))
+    plt.xlabel("Episodes")
+    plt.ylabel("Coverage")
+    plt.savefig("plots/fig4-"+str(PERM)+"-"+str(sh)+".png")
+    if view:
+        plt.show()
 
-data=sorted(data,key = lambda Q:-np.mean([q[-1] for q in Q[0]]))
-for d,tag in data:
-    T=np.mean(d,axis=0)
-    X=np.arange(len(T))
-    std=np.std(d,axis=0)/2
-    plt.plot(X,T,label=tag)
-    plt.fill_between(X,T-std,T+std,alpha=0.35, label='_nolegend_')
-plt.legend()
-plt.title("Resolution: " +str(sh))
-plt.xlabel("Episodes")
-plt.ylabel("Coverage")
-plt.show()
-
-
-
+if __name__ == "__main__":
     
-
-
-
-
-plt.plot()
-plt.show()
+    if 1:
+        plot4(0,50)
+    else:
+        import multiprocessing as mp
+        import time
+        procs=[]
+        for sh in [50,150,500]:
+            for PERM in range(4):
+                p=mp.Process(target=plot4,args=(PERM,sh))
+                p.start()
+                time.sleep(2)
+                procs.append(p)
+            
+        for p in procs:
+            p.join()

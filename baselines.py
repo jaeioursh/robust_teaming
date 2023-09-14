@@ -58,7 +58,11 @@ def diversity(env,itr,n_agents,PERM=0,iterations=4000):
             np.save(fname+".st",np.array(States))    
             np.save(fname+".pos",np.array(POS)) 
 
-def neighbors(env,itr,k,AE=0,PERM=0,iterations=450):
+    fname="save/baselines/D"+"-".join([str(D) for D in[itr,n_agents,PERM]])
+    np.save(fname+".st",np.array(States))    
+    np.save(fname+".pos",np.array(POS)) 
+
+def neighbors(env,itr,k,AE=0,PERM=0,iterations=451):
 
     neigh = NearestNeighbors(n_neighbors=k+1)
 
@@ -116,6 +120,59 @@ def neighbors(env,itr,k,AE=0,PERM=0,iterations=450):
             np.save(fname+".pos",np.array(POS))  
 
 
+def big_batch():
+    for PERM in range(4):
+        for itr in range(8):
+            procs=[]
+            
+            for k in (5,10,50):
+                for AE in [0,1]:
+                    env=make_env(1,PERM=PERM)
+                    p=mp.Process(target=neighbors,args=(env,itr,k,AE,PERM))
+                    p.start()
+                    time.sleep(0.05)
+                    procs.append(p)
+            for n_agents in (10,50,250):
+                env=make_env(1,PERM=PERM)
+                p=mp.Process(target=diversity,args=(env,itr,n_agents,PERM))
+                p.start()
+                time.sleep(0.05)
+                procs.append(p)
+            
+            for sh in [50,150,500]:
+                env=make_env(1,PERM=PERM)
+                p=mp.Process(target=train_map,args=(env,itr,sh,PERM))
+                p.start()
+                time.sleep(0.05)
+                procs.append(p)
+            
+            for p in procs:
+                p.join()
+
+def small_batch():
+    for PERM in range(4):
+        procs=[]
+        for itr in range(8):
+            
+            
+            
+            for n_agents in [250]:
+                env=make_env(1,PERM=PERM)
+                p=mp.Process(target=diversity,args=(env,itr,n_agents,PERM))
+                p.start()
+                time.sleep(0.05)
+                procs.append(p)
+            
+            for sh in [50,150,500]:
+                env=make_env(1,PERM=PERM)
+                p=mp.Process(target=train_map,args=(env,itr,sh,PERM))
+                p.start()
+                time.sleep(0.05)
+                procs.append(p)
+            
+        for p in procs:
+            p.join()
+
 if __name__ == "__main__":
     if not os.path.exists("save/baselines/"):
         os.makedirs("save/baselines/")
@@ -127,30 +184,4 @@ if __name__ == "__main__":
         train_map(env,77,50,PERM)
     else:
         
-        for PERM in range(4):
-            for itr in range(8):
-                procs=[]
-                
-                for k in (5,10,50):
-                    for AE in [0,1]:
-                        env=make_env(1,PERM=PERM)
-                        p=mp.Process(target=neighbors,args=(env,itr,k,AE,PERM))
-                        p.start()
-                        time.sleep(0.05)
-                        procs.append(p)
-                for n_agents in (10,50,250):
-                    env=make_env(1,PERM=PERM)
-                    p=mp.Process(target=diversity,args=(env,itr,n_agents,PERM))
-                    p.start()
-                    time.sleep(0.05)
-                    procs.append(p)
-                
-                for sh in [50,150,500]:
-                    env=make_env(1,PERM=PERM)
-                    p=mp.Process(target=train_map,args=(env,itr,sh,PERM))
-                    p.start()
-                    time.sleep(0.05)
-                    procs.append(p)
-                
-                for p in procs:
-                    p.join()
+        

@@ -66,7 +66,7 @@ def train_map(env,itr,sh,PERM=0):
     else:
         ae=Autoencoder()
     ae.load("save/"+str(PERM)+".mdl")
-    run(env,100000,itr,sh,ae,PERM)
+    run(env,105000,itr,sh,ae,PERM)
 
 
 def gen_ae(perm):
