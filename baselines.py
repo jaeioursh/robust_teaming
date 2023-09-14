@@ -153,16 +153,6 @@ def small_batch():
     for PERM in range(4):
         procs=[]
         for itr in range(8):
-            
-            
-            
-            for n_agents in [250]:
-                env=make_env(1,PERM=PERM)
-                p=mp.Process(target=diversity,args=(env,itr,n_agents,PERM))
-                p.start()
-                time.sleep(0.05)
-                procs.append(p)
-            
             for sh in [50,150,500]:
                 env=make_env(1,PERM=PERM)
                 p=mp.Process(target=train_map,args=(env,itr,sh,PERM))
