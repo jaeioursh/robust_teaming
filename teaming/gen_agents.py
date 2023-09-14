@@ -86,7 +86,7 @@ def run(env,iters,itr,sh,ae=None,PERM=0):
             
             print(i,n)
             fname="save/baselines/M"+"-".join([str(D) for D in[itr,sh,PERM]])
-            with open(fname+".pkl") as f:
+            with open(fname+".pkl","wb") as f:
                 pickle.dump( arry,f)
             np.save(fname+".st",np.array(STATES))  
             np.save(fname+".pos",np.array(POS))  
