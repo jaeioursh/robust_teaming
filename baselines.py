@@ -183,5 +183,6 @@ if __name__ == "__main__":
         #neighbors(env,77,5,1,PERM)
         train_map(env,77,50,PERM)
     else:
+        small_batch()
         
         
