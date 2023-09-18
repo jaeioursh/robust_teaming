@@ -61,7 +61,7 @@ def plot4(PERM,sh=50,view=False):
                 fname="save/baselines/N"+"-".join([str(N) for N in[itr,k,AE,PERM]])+".st.npy"
                 print(fname)
                 d.append( loads(fname,ae,shape,PERM)[0] )
-            data.append([d,"Diversity"+str(k)])#+"ae"*AE])
+            data.append([d,"Diversity-"+str(k)])#+"ae"*AE])
 
     for n_agents in (10,50,250):
         d=[]
@@ -69,7 +69,7 @@ def plot4(PERM,sh=50,view=False):
             fname="save/baselines/D"+"-".join([str(D) for D in[itr,n_agents,PERM]])+".st.npy"
             print(fname)
             d.append( loads(fname,ae,shape,PERM)[0] )
-        data.append([d,"DIAYN"+str(n_agents)])
+        data.append([d,"DIAYN-"+str(n_agents)])
 
     d=[]
     for itr in range(TRIALS):
@@ -96,7 +96,7 @@ def plot4(PERM,sh=50,view=False):
 
 if __name__ == "__main__":
     
-    if 1:
+    if 0:
         plot4(0,50)
     else:
         import multiprocessing as mp

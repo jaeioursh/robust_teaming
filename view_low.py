@@ -8,8 +8,12 @@ import pyximport
 pyximport.install()
 from teaming.cceamtl import *
 from mtl import make_env
-
-with open("save/a.pkl","rb") as f:
+itr=0
+sh=150
+PERM=0
+fname="save/baselines/M"+"-".join([str(D) for D in[itr,sh,PERM]])+".pkl"
+print(fname)
+with open(fname,"rb") as f:
     arry=pickle.load(f)
 
 
@@ -19,13 +23,13 @@ agent=Evo_MLP(8,2,20)
 
 
 mp=[[np.nan if a is None else a[1] for a in arr] for arr in arry]
-print(mp)
+#print(mp)
 fig1=plt.figure(1)
 
 plt.imshow(mp,cmap=mpl.colormaps["Reds"])
 
 mp=[[np.nan if a is None else 1./(a[3]+200) for a in arr] for arr in arry]
-print(mp)
+#print(mp)
 fig1_5=plt.figure(2)
 
 plt.imshow(mp,cmap=mpl.colormaps["Reds"])

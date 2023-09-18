@@ -75,6 +75,8 @@ def gen_ae(perm):
     train_ae(perm)
 
 if __name__=="__main__":
+    view_ae(0)
+    '''
     if 0:
         procs=[]
         for i in range(4):
@@ -87,6 +89,7 @@ if __name__=="__main__":
     else:
         for i in range(4):
             view_ae(i)
+    '''
     #train_map(0)
 
     '''
