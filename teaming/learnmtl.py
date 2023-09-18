@@ -148,7 +148,7 @@ class learner:
         
 
     def set_single(self,team):
-        params,r=self.ext_params[team]
+        params=self.ext_params[team][0]
         params=[np.copy(np.array(p)) for p in params]
         self.external_agent.__setstate__(params)
 
