@@ -154,7 +154,7 @@ if __name__=="__main__":
         for n_teams in [25,100]:
             for team_swap_frq in [500,5000]:
                 teams=100
-                for i in range(8):
+                for i in range(4):
                     trial=i
                     n_agents=4
                     train_flag=4
