@@ -152,7 +152,7 @@ if __name__=="__main__":
     else:
         procs=[]
         for n_teams in [25,100]:
-            for team_swap_frq in [50,500,5000]:
+            for team_swap_frq in [500,5000]:
                 teams=100
                 for i in range(8):
                     trial=i
