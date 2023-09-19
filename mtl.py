@@ -150,21 +150,22 @@ if __name__=="__main__":
         print(s.getvalue())
         
     else:
-        procs=[]
-        for n_teams in [25,100]:
-            for team_swap_frq in [500,5000]:
-                teams=100
-                for i in range(4):
-                    trial=i
-                    n_agents=4
-                    train_flag=4
-                    p=mp.Process(target=test1,args=(trial,n_agents,n_teams,team_swap_frq,train_flag))
-                    p.start()
-                    time.sleep(0.05)
-                    procs.append(p)
-                    #p.join()git ad
-        for p in procs:
-            p.join()
+        for q in range(1,4):
+            procs=[]
+            for n_teams in [25,100]:
+                for team_swap_frq in [500,5000]:
+                    teams=100
+                    for i in range(4*q,4*(q+1)):
+                        trial=i
+                        n_agents=4
+                        train_flag=4
+                        p=mp.Process(target=test1,args=(trial,n_agents,n_teams,team_swap_frq,train_flag))
+                        p.start()
+                        time.sleep(0.05)
+                        procs.append(p)
+                        #p.join()git ad
+            for p in procs:
+                p.join()
 
 # 100 - static
 # 200 - minimax single

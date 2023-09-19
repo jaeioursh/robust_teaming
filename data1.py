@@ -6,14 +6,15 @@ import matplotlib
 plt.style.use('tableau-colorblind10')
 #matplotlib.rcParams['text.usetex'] = True
 from teaming import logger
-
-#scp -J cookjos@access.engr.oregonstate.edu cookjos@graf200-17.engr.oregonstate.edu:robust_teaming/save/testing/* save/testing/
-for n_teams in [10,50]:
-    for team_swap_frq in [50,500]:
+'''
+scp -J cookjos@access.engr.oregonstate.edu cookjos@graf200-17.engr.oregonstate.edu:robust_teaming/save/testing/* save/testing/
+'''
+for n_teams in [25,100]:
+    for team_swap_frq in [500,5000]:
         
         T=[]
         mint=1e9
-        for i in range(1):
+        for i in range(4):
             trial=i
             n_agents=4
             train_flag=4
@@ -42,7 +43,8 @@ for n_teams in [10,50]:
             mint=min(len(t),mint)
             
             
-            print(np.round(t[-1,:],2))
+            #print(np.round(t[-1,:],2))
+            print(np.sum(t[-1,:]))
             N=len(np.average(t,axis=0))
             t=np.sum(t,axis=1)
             T.append(t)

@@ -5,8 +5,9 @@ import matplotlib.pyplot as plt
 plt.style.use('tableau-colorblind10')
 
 from teaming.autoencoder import Autoencoder
-
-#scp -J cookjos@access.engr.oregonstate.edu cookjos@graf200-16.engr.oregonstate.edu:robust_teaming/save/baselines/* save/baselines/
+'''
+scp -J cookjos@access.engr.oregonstate.edu cookjos@graf200-16.engr.oregonstate.edu:robust_teaming/save/baselines/* save/baselines/
+'''
 def loads(fname,ae,shape,PERM):
     state=np.load(fname)
     print(state.shape)
