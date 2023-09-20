@@ -23,6 +23,11 @@ def plot2(PERM=1,N=0):
         n_agents=10
         fname="save/baselines/D"+"-".join([str(D) for D in[itr,n_agents,PERM]])
 
+    titles=["Sampled States", "MASS", "Novelty Search", "DIAYN"]
+    if PERM==0:
+        plt.title(titles[N])
+    if N==1:
+        plt.ylabel("Env. #"+str(PERM+1))
 
     fname+=".pos.npy"
 
@@ -40,7 +45,9 @@ def plot2(PERM=1,N=0):
         
         p=np.array([p0[0] for p0 in p])
         plt.plot(p[:,0],p[:,1],"k-",linewidth=0.1)
-        
+    
+    plt.xticks([])
+    plt.yticks([])
     plt.xlim((-5,35))
     plt.ylim((-5,35))
 
@@ -59,6 +66,6 @@ for PERM in range(rows):
         plot2(PERM,N)
         plt.gca().set_aspect('equal')
 plt.tight_layout()
-
+#plt.subplots_adjust(left=0.005, bottom=0.005, right=.995, top=.995, wspace=0.005, hspace=0.005)
 plt.savefig("plots/fig2.png")
 plt.show()

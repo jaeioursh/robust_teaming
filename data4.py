@@ -91,14 +91,26 @@ def plot4(PERM,sh=50,view=False):
     plt.title("Resolution: " +str(sh)+", Env. Version "+str(PERM))
     plt.xlabel("Episodes")
     plt.ylabel("Coverage")
-    plt.savefig("plots/fig4-"+str(PERM)+"-"+str(sh)+".png")
+    plt.savefig()
     if view:
         plt.show()
 
+def build():
+    import cv2
+    image=[]
+    for sh in [50,150,500]:
+        ims=[]
+        for PERM in range(4):
+            fname = "plots/fig4-"+str(PERM)+"-"+str(sh)+".png"
+            im = cv2.imread(fname)
+            ims.append(im)
+        image.append(np.hstack(ims))
+    image=np.vstack(image)
+    cv2.imwrite("plots/fig4.png",image)
 if __name__ == "__main__":
     
-    if 0:
-        plot4(0,50)
+    if 1:
+        build()
     else:
         import multiprocessing as mp
         import time

@@ -58,11 +58,14 @@ def plot3(PERM=1,N=0):
         
         state=state[:10000]
 
-    titles=["Sampled States", "Our Method", "Novelty Search", "DIAYN"]
+    titles=["Sampled States", "MASS", "Novelty Search", "DIAYN"]
 
     xy=ae.feed(state)
 
-    plt.title("Env. #"+str(PERM)+", "+titles[N])
+    if PERM==0:
+        plt.title(titles[N])
+    if N==0:
+        plt.ylabel("Env. #"+str(PERM+1))
 
     if 0:
         plt.xlim((0,1))
@@ -76,6 +79,8 @@ def plot3(PERM=1,N=0):
         for x,y in xy:
             mp[int(y*sh),int(x*sh)]=1
         plt.imshow(mp,cmap=mpl.colormaps["Reds"])
+        plt.xticks([])
+        plt.yticks([])
 
 
 q=0
@@ -90,6 +95,6 @@ for PERM in range(rows):
         plot3(PERM,N)
         plt.gca().set_aspect('equal')
 plt.tight_layout()
-
+#plt.subplots_adjust(left=0.005, bottom=0.005, right=.995, top=.995, wspace=0.005, hspace=0.005)
 plt.savefig("plots/fig3.png")
 plt.show()

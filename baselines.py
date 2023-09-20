@@ -122,11 +122,11 @@ def neighbors(env,itr,k,AE=0,PERM=0,iterations=451):
 
 def big_batch():
     for PERM in range(4):
-        for itr in range(8):
+        for itr in range(8,16):
             procs=[]
             
             for k in (5,10,50):
-                for AE in [0,1]:
+                for AE in [1]:
                     env=make_env(1,PERM=PERM)
                     p=mp.Process(target=neighbors,args=(env,itr,k,AE,PERM))
                     p.start()
@@ -173,6 +173,6 @@ if __name__ == "__main__":
         #neighbors(env,77,5,1,PERM)
         train_map(env,77,50,PERM)
     else:
-        small_batch()
+        big_batch()
         
         

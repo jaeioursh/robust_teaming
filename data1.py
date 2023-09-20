@@ -14,7 +14,7 @@ for n_teams in [25,100]:
         
         T=[]
         mint=1e9
-        for i in range(4):
+        for i in range(12):
             trial=i
             n_agents=4
             train_flag=4
