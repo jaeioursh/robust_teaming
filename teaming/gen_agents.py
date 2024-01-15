@@ -1,6 +1,9 @@
 import numpy as np
 import pickle 
 
+import pyximport
+pyximport.install()
+
 from .cceamtl import *
 
 
@@ -24,7 +27,7 @@ def pick(arry,MT):
     #return np.random.choice(vals,1)[0]
 
 
-def run(env,iters,itr,sh,ae=None,PERM=0):
+def run(env,iters,itr,sh,ae=None,PERM=0,saved=True):
     n=0
     shape=(sh,sh)
     arry=gen_dict(shape)
@@ -82,7 +85,7 @@ def run(env,iters,itr,sh,ae=None,PERM=0):
         
         
 
-        if i%1000==0:
+        if i%1000==0 and saved:
             
             print(i,n)
             fname="save/baselines/M"+"-".join([str(D) for D in[itr,sh,PERM]])
@@ -90,4 +93,5 @@ def run(env,iters,itr,sh,ae=None,PERM=0):
                 pickle.dump( arry,f)
             np.save(fname+".st",np.array(STATES))  
             np.save(fname+".pos",np.array(POS))  
-
+    if not saved:
+        return STATES,POS

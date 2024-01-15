@@ -69,11 +69,11 @@ for idx in range(N):
         data=np.array(data).T
         x,y=data
         tt=0
-        mkr=[".",",","*","v","^","<",">","1","2","3","4","8"][tt]
+        mkr=[".",",","*","v","^","<",">","1","2","3","4","8"][2]
         clr=["b","g","c","m","y","k","r","b","g","c","m","y"][tt]
         #mkr='*'
         #clr="k"
-        plt.plot(x[0],y[0],color=clr,marker=mkr,linewidth=1.0)
+        plt.plot(x[0],y[0],color=clr,marker=mkr,linewidth=5.0)
     
    
         
@@ -100,6 +100,7 @@ for idx in range(N):
     #plt.axes().set_aspect('equal', 'datalim')
     #plt.pause(1.0)
     plt.gca().set_aspect('equal')
+plt.rcParams['figure.figsize'] = [2, 2]
 print(summ)
 if compact:
     plt.subplots_adjust(left=0.05, bottom=0.05, right=.95, top=.95, wspace=0.05, hspace=0.05)

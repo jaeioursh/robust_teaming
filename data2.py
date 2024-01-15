@@ -67,5 +67,5 @@ for PERM in range(rows):
         plt.gca().set_aspect('equal')
 plt.tight_layout()
 #plt.subplots_adjust(left=0.005, bottom=0.005, right=.995, top=.995, wspace=0.005, hspace=0.005)
-plt.savefig("plots/fig2.png")
+plt.savefig("plots/fig2.pdf")
 plt.show()

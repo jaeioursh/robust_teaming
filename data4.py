@@ -1,6 +1,7 @@
 #for coverage curve
 import numpy as np
 import matplotlib.pyplot as plt
+import pickle
 
 plt.style.use('tableau-colorblind10')
 
@@ -43,9 +44,9 @@ def loads(fname,ae,shape,PERM):
 
 
 
-def plot4(PERM,sh=50,view=False):
+def pre_plot(PERM,sh=50,view=False):
     #PERM=1
-    TRIALS=8
+    TRIALS=24
     if PERM==1:
         ae=Autoencoder(16)
     else:
@@ -80,20 +81,40 @@ def plot4(PERM,sh=50,view=False):
             
 
     data=sorted(data,key = lambda Q:-np.mean([q[-1] for q in Q[0]]))
-    data=[[d,"OURS"]]+data
+    data=[[d,"MASS"]]+data
+
+    with open("plots/fig4-"+str(PERM)+"-"+str(sh)+".pkl","wb") as f:
+        pickle.dump(data,f)
+
+def plot4(PERM,sh=50):
+    with open("plots/fig4-"+str(PERM)+"-"+str(sh)+".pkl","rb") as f:
+        print("loading")
+        data=pickle.load(f)
+        print("loaded")
+    TRIALS=len(data[0][0])
     for d,tag in data:
+        res=1000
+        d=np.array(d)
+        d=d[:,::res]
         T=np.mean(d,axis=0)
-        X=np.arange(len(T))
-        std=np.std(d,axis=0)/np.sqrt(8)
+        
+        X=np.arange(len(T))*res
+        std=np.std(d,axis=0)/np.sqrt(TRIALS)
+        
         plt.plot(X,T,label=tag)
         plt.fill_between(X,T-std,T+std,alpha=0.35, label='_nolegend_')
-    plt.legend()
-    plt.title("Resolution: " +str(sh)+", Env. Version "+str(PERM))
-    plt.xlabel("Episodes")
-    plt.ylabel("Coverage")
-    plt.savefig()
-    if view:
-        plt.show()
+    if PERM==3 and sh==50:
+        plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+    if sh==50:
+        plt.title("Env. Version "+str(PERM+1))
+    if sh==500:
+        plt.xlabel("Episodes")
+    if PERM==0:
+        plt.ylabel("Resolution: " +str(sh)+"\n Coverage")
+    plt.grid()
+    #plt.savefig("plots/fig4-"+str(PERM)+"-"+str(sh)+".png")
+   
+    
 
 def build():
     import cv2
@@ -107,20 +128,32 @@ def build():
         image.append(np.hstack(ims))
     image=np.vstack(image)
     cv2.imwrite("plots/fig4.png",image)
+
 if __name__ == "__main__":
-    
-    if 1:
+    MAKE=0
+    if 0:
         build()
     else:
         import multiprocessing as mp
         import time
-        procs=[]
+        
+        nplot=0
         for sh in [50,150,500]:
+            procs=[]
             for PERM in range(4):
-                p=mp.Process(target=plot4,args=(PERM,sh))
-                p.start()
-                time.sleep(2)
-                procs.append(p)
-            
-        for p in procs:
-            p.join()
+                nplot+=1
+                print(nplot)
+                if MAKE:
+                    p=mp.Process(target=pre_plot,args=(PERM,sh))
+                    p.start()
+                    time.sleep(2)
+                    procs.append(p)
+                else:
+                    plt.subplot(3,4,nplot)
+                    plot4(PERM,sh)
+            if MAKE:
+                for p in procs:
+                    p.join()
+        if not MAKE:
+            plt.tight_layout()
+            plt.show()
