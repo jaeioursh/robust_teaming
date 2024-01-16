@@ -34,7 +34,7 @@ if __name__=="__main__":
     procs=[]
     for i in range(16):
         env=make_env(1,PERM=0)
-        p=mp.Process(env,target=train_both,args=(i,50,1000))
+        p=mp.Process(target=train_both,args=(env,i,50,1000))
         p.start()
         time.sleep(0.05)
         procs.append(p)
