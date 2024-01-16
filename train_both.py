@@ -5,11 +5,11 @@ from mtl import make_env
 import multiprocessing as mp
 import time
 
-def train_both(itr=-1,sh=50,iters=1000):
+def train_both(env,itr=-1,sh=50,iters=1000):
     S=[]
     P=[]
     
-    env=make_env(1,PERM=0)
+    
     for idx in range(105000//iters):
         print(idx)
         ae=Autoencoder()
@@ -33,8 +33,8 @@ def train_both(itr=-1,sh=50,iters=1000):
 if __name__=="__main__":
     procs=[]
     for i in range(16):
-        
-        p=mp.Process(target=train_both,args=(i,50,1000))
+        env=make_env(1,PERM=0)
+        p=mp.Process(env,target=train_both,args=(i,50,1000))
         p.start()
         time.sleep(0.05)
         procs.append(p)
